@@ -1,0 +1,59 @@
+netcdf cru_ts4.05.1901.2020.ndvi.dat_118-126E_38-44N {
+dimensions:
+	time = 120;
+	lon = 16 ;
+	lat = 12 ;
+variables:
+	float time(time) ;
+		time:units = "years since 1901-01-01" ;
+		time:standard_name = "time" ;
+		time:long_name = "time" ;
+		time:axis = "T" ;
+		time:calendar = "gregorian" ;
+	float lon(lon) ;
+		lon:units = "degrees_east" ;
+		lon:long_name = "Longitude" ;
+		lon:standard_name = "longitude" ;
+		lon:axis = "X" ;
+	float lat(lat) ;
+		lat:units = "degrees_north" ;
+		lat:long_name = "Latitude" ;
+		lat:standard_name = "latitude" ;
+		lat:axis = "Y" ;
+	float ndvi(time, lat, lon) ;
+		ndvi:long_name = "ndvicipitation" ;
+		ndvi:units = "mm/month" ;
+		ndvi:_FillValue = 3.e+33f ;
+
+// global attributes:
+		:title = "subset of CRU TS4.05 ndvicipitation" ;
+		:Conventions = "CF-1.0" ;
+		:source_field = "https://climexp.knmi.nl/select.cgi?field=cru4_ndvi" ;
+		:cdi = "Climate Data Interface version 1.9.10 (https://mpimet.mpg.de/cdi)" ;
+		:source = "Run ID = 2103051243. Data generated from:ndvi.2103041709.dtb" ;
+		:institution = "KNMI Climate Explorer and Data held at British Atmospheric Data Centre, RAL, UK." ;
+		:references = "Information on the data is available at http://badc.nerc.ac.uk/data/cru/" ;
+		:comment = "Access to these data is available to any registered CEDA user." ;
+		:contact = "support@ceda.ac.uk" ;
+		:cdo = "Climate Data Operators version 1.9.10 (https://mpimet.mpg.de/cdo)" ;
+		:geospatial_lat_min = 38.f ;
+		:geospatial_lat_max = 44.f ;
+		:geospatial_lat_units = "degrees_north" ;
+		:geospatial_lon_min = 118.f ;
+		:geospatial_lon_max = 126.f ;
+		:geospatial_lon_units = "degrees_east" ;
+		:geospatial_lat_resolution = 0.5f ;
+		:geospatial_lon_resolution = 0.5f ;
+		:time_coverage_start = "1901" ;
+		:time_coverage_end = "2020" ;
+		:climexp_url = "https://climexp.knmi.nl/select.cgi?cru4_ndvi" ;
+		:scripturl01 = "http://climexp.knmi.nl/get_index.cgi?email=$id&field=cru4_ndvi&gridpoints=field&intertype=nearest&lat1=38&lat2=44&lon1=118&lon2=126&masktype=all&minfac=30" ;
+		:history = " 2022-03-06  4:48:42 ./bin/get_index CRUData/cru_ts4.05.1901.2020.ndvi.dat.nc 118 126 38 44 outfield data/cru_ts4.05.1901.2020.ndvi.dat_118-126E_38-44N.nc\\nWed Dec 08 15:04:55 2021: cdo -r -f nc4 -z zip selvar,ndvi ndvi/cru_ts4.05.1901.2020.ndvi.dat.nc cru_ts4.05.1901.2020.ndvi.dat.nc\\nFri  5 Mar 14:41:58 GMT 2021 : User harry : Program makegridsauto.for called by update.for" ;
+data:
+
+ time =timedata;
+ lon = londata;
+ lat = latdata;
+
+ ndvi =ndvidata;
+}
