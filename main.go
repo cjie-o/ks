@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"math"
 	"strings"
 )
@@ -41,6 +42,10 @@ func main() {
 	ndvi1 = strings.ReplaceAll(ndvi1, "latdata", string(lat[1:len(lat)-1]))
 	ndvi1 = strings.ReplaceAll(ndvi1, "londata", string(lon[1:len(lon)-1]))
 	ioutil.WriteFile("./t.txt", []byte(ndvi1), 0755)
+	// log.Println(ndvi1)
+}
+func (D *Data) marsh(data *Data) []float64 {
+
 }
 
 func com(data *Data) []float64 {
@@ -52,9 +57,10 @@ func com(data *Data) []float64 {
 		var T, P float64
 		T = 0
 		P = 0
-		for j := 12 * i; j < 12*(i+1); j++ {
+		for j := 12 * i; j < 12*len; j += 12 * 16 {
 			if data.Tmp[j] == nil || data.Pre[j] == nil {
 				is_continu = true
+				log.Println("i : ", i, "j:", j)
 				break
 			}
 			T += data.Tmp[j].(float64) / 12
