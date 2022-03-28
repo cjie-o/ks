@@ -5,14 +5,15 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	"strings"
 )
 
 type Data struct {
-	Time                  []int
-	Lon                   []float64
-	Lat                   []float64
-	Pre, Tmp, Ndvi, Plant []interface{}
-	Data                  [][][]map[string]float64
+	Time                                        []int
+	Lon                                         []float64
+	Lat                                         []float64
+	Pre, Tmp, Ndvi, PlantM1, PlantM2, PlantMlow []interface{}
+	Data                                        [][][]map[string]float64
 }
 
 func main() {
@@ -30,25 +31,25 @@ func main() {
 	//
 	data.com()
 
-	d, _ := json.Marshal(data)
-	log.Println(string(d))
+	// d, _ := json.Marshal(data)
+	// log.Println(string(d))
 	// a := com(data)
 
-	// a1, _ := json.Marshal(a)
-	// time, _ := json.Marshal(data.Time[0 : len(data.Time)/12])
-	// lon, _ := json.Marshal(data.Lon)
-	// lat, _ := json.Marshal(data.Lat)
-	// // fmt.Println()
-	// // d, err := json.Marshal(data)
-	// // log.Println(string(d), err)
+	a1, _ := json.Marshal(data.Plant)
+	time, _ := json.Marshal(data.Time[0 : len(data.Time)/12])
+	lon, _ := json.Marshal(data.Lon)
+	lat, _ := json.Marshal(data.Lat)
+	// fmt.Println()
+	// d, err := json.Marshal(data)
+	// log.Println(string(d), err)
 
-	// ndvi, _ := ioutil.ReadFile("ndvi.txt")
-	// ndvi1 := strings.Replace(string(ndvi), "ndvidata", string(a1[1:len(a1)-1]), 1)
-	// ndvi1 = strings.ReplaceAll(ndvi1, "timedata", string(time[1:len(time)-1]))
-	// ndvi1 = strings.ReplaceAll(ndvi1, "latdata", string(lat[1:len(lat)-1]))
-	// ndvi1 = strings.ReplaceAll(ndvi1, "londata", string(lon[1:len(lon)-1]))
-	// ioutil.WriteFile("./t.txt", []byte(ndvi1), 0755)
-	// // log.Println(ndvi1)
+	plant, _ := ioutil.ReadFile("plant.txt")
+	plant1 := strings.Replace(string(plant), "plantdata", string(a1[1:len(a1)-1]), 1)
+	plant1 = strings.ReplaceAll(plant1, "timedata", string(time[1:len(time)-1]))
+	plant1 = strings.ReplaceAll(plant1, "latdata", string(lat[1:len(lat)-1]))
+	plant1 = strings.ReplaceAll(plant1, "londata", string(lon[1:len(lon)-1]))
+	ioutil.WriteFile("./t.txt", []byte(plant1), 0755)
+	// log.Println(plant1)
 }
 func (D *Data) marsh() {
 	D.Data = make([][][]map[string]float64, len(D.Lon))
@@ -72,7 +73,7 @@ func (D *Data) marsh() {
 }
 
 func (D *Data) com() {
-	a := make([]interface{}, len(D.Pre)/12)
+	a1 := make([]interface{}, len(D.Pre)/12)
 	D.Plant = a
 	for i := 0; i < len(D.Lon); i++ {
 		for j := 0; j < len(D.Lat); j++ {
@@ -98,11 +99,12 @@ func (D *Data) com() {
 
 				tmp := 3000 / (1 + math.Exp(1.315-0.119*T))
 				pre := 3000 * (1 - math.Exp(-0.000664*P))
+				location := (k)*len(D.Lat)*len(D.Lon) + j*len(D.Lon) + i
 				if tmp > pre {
-					a[k] = pre
+					a[location] = pre
 					continue
 				}
-				a[k] = tmp
+				a[location] = tmp
 			}
 		}
 	}
