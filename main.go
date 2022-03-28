@@ -9,11 +9,12 @@ import (
 )
 
 type Data struct {
-	Time                                        []int
-	Lon                                         []float64
-	Lat                                         []float64
-	Pre, Tmp, Ndvi, PlantM1, PlantM2, PlantMlow []interface{}
-	Data                                        [][][]map[string]float64
+	Time []int
+	Lon  []float64
+	Lat  []float64
+	Pre, Tmp, Ndvi,
+	PlantMtemp, PlantMpre, PlantM []interface{}
+	Data [][][]map[string]float64
 }
 
 func main() {
@@ -35,7 +36,10 @@ func main() {
 	// log.Println(string(d))
 	// a := com(data)
 
-	a1, _ := json.Marshal(data.Plant)
+	PlantMtemp, _ := json.Marshal(data.PlantMtemp)
+	PlantMpre, _ := json.Marshal(data.PlantMpre)
+	PlantM, _ := json.Marshal(data.PlantM)
+
 	time, _ := json.Marshal(data.Time[0 : len(data.Time)/12])
 	lon, _ := json.Marshal(data.Lon)
 	lat, _ := json.Marshal(data.Lat)
@@ -43,8 +47,11 @@ func main() {
 	// d, err := json.Marshal(data)
 	// log.Println(string(d), err)
 
-	plant, _ := ioutil.ReadFile("plant.txt")
-	plant1 := strings.Replace(string(plant), "plantdata", string(a1[1:len(a1)-1]), 1)
+	plant, _ := ioutil.ReadFile("data.txt")
+	plant1 := strings.ReplaceAll(string(plant), "plantMtempdata", string(PlantMtemp[1:len(PlantMtemp)-1]))
+	plant1 = strings.ReplaceAll(plant1, "plantMpredata", string(PlantMpre[1:len(PlantMpre)-1]))
+	plant1 = strings.ReplaceAll(plant1, "plantMdata", string(PlantM[1:len(PlantM)-1]))
+
 	plant1 = strings.ReplaceAll(plant1, "timedata", string(time[1:len(time)-1]))
 	plant1 = strings.ReplaceAll(plant1, "latdata", string(lat[1:len(lat)-1]))
 	plant1 = strings.ReplaceAll(plant1, "londata", string(lon[1:len(lon)-1]))
@@ -74,7 +81,11 @@ func (D *Data) marsh() {
 
 func (D *Data) com() {
 	a1 := make([]interface{}, len(D.Pre)/12)
-	D.Plant = a
+	a2 := make([]interface{}, len(D.Pre)/12)
+	a3 := make([]interface{}, len(D.Pre)/12)
+	D.PlantMtemp = a1
+	D.PlantMpre = a2
+	D.PlantM = a3
 	for i := 0; i < len(D.Lon); i++ {
 		for j := 0; j < len(D.Lat); j++ {
 			for k := 0; k < len(D.Time)/12; k++ {
@@ -100,11 +111,13 @@ func (D *Data) com() {
 				tmp := 3000 / (1 + math.Exp(1.315-0.119*T))
 				pre := 3000 * (1 - math.Exp(-0.000664*P))
 				location := (k)*len(D.Lat)*len(D.Lon) + j*len(D.Lon) + i
+				a1[location] = tmp
+				a2[location] = pre
 				if tmp > pre {
-					a[location] = pre
+					a3[location] = pre
 					continue
 				}
-				a[location] = tmp
+				a3[location] = tmp
 			}
 		}
 	}
