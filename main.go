@@ -86,6 +86,7 @@ func (D *Data) com() {
 	D.PlantMtemp = a1
 	D.PlantMpre = a2
 	D.PlantM = a3
+
 	for i := 0; i < len(D.Lon); i++ {
 		for j := 0; j < len(D.Lat); j++ {
 			for k := 0; k < len(D.Time)/12; k++ {
