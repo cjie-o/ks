@@ -13,6 +13,7 @@ type Data struct {
 	Lon  []float64
 	Lat  []float64
 	Pre, Tmp, Ndvi,
+	PlantS,
 	PlantMtemp, PlantMpre, PlantM []interface{}
 	Data [][][]map[string]float64
 }
@@ -39,6 +40,7 @@ func main() {
 	PlantMtemp, _ := json.Marshal(data.PlantMtemp)
 	PlantMpre, _ := json.Marshal(data.PlantMpre)
 	PlantM, _ := json.Marshal(data.PlantM)
+	PlantS, _ := json.Marshal(data.PlantS)
 
 	time, _ := json.Marshal(data.Time[0 : len(data.Time)/12])
 	lon, _ := json.Marshal(data.Lon)
@@ -51,10 +53,12 @@ func main() {
 	plant1 := strings.ReplaceAll(string(plant), "plantMtempdata", string(PlantMtemp[1:len(PlantMtemp)-1]))
 	plant1 = strings.ReplaceAll(plant1, "plantMpredata", string(PlantMpre[1:len(PlantMpre)-1]))
 	plant1 = strings.ReplaceAll(plant1, "plantMdata", string(PlantM[1:len(PlantM)-1]))
+	plant1 = strings.ReplaceAll(plant1, "plantSdata", string(PlantS[1:len(PlantS)-1]))
 
 	plant1 = strings.ReplaceAll(plant1, "timedata", string(time[1:len(time)-1]))
 	plant1 = strings.ReplaceAll(plant1, "latdata", string(lat[1:len(lat)-1]))
 	plant1 = strings.ReplaceAll(plant1, "londata", string(lon[1:len(lon)-1]))
+	plant1 = strings.ReplaceAll(plant1, "null", "_")
 	ioutil.WriteFile("./t.txt", []byte(plant1), 0755)
 	// log.Println(plant1)
 }
@@ -83,9 +87,12 @@ func (D *Data) com() {
 	a1 := make([]interface{}, len(D.Pre)/12)
 	a2 := make([]interface{}, len(D.Pre)/12)
 	a3 := make([]interface{}, len(D.Pre)/12)
+	b := make([]interface{}, len(D.Pre)/12)
+
 	D.PlantMtemp = a1
 	D.PlantMpre = a2
 	D.PlantM = a3
+	D.PlantS = b
 
 	for i := 0; i < len(D.Lon); i++ {
 		for j := 0; j < len(D.Lat); j++ {
@@ -103,7 +110,7 @@ func (D *Data) com() {
 						break
 					}
 					T += D.Tmp[location].(float64) / 12
-					P += D.Pre[location].(float64) / 12
+					P += D.Pre[location].(float64)
 				}
 				if is_continu {
 					continue
@@ -114,6 +121,16 @@ func (D *Data) com() {
 				location := (k)*len(D.Lat)*len(D.Lon) + j*len(D.Lon) + i
 				a1[location] = tmp
 				a2[location] = pre
+
+				// s
+				s := func() float64 {
+					l := 300 + 25*T + 0.05*math.Pow(T, 3)
+					v := 1.05 * P / math.Sqrt(1+math.Pow(1.05*P/l, 2))
+					s := 3000 * (1 - math.Exp(-0.0009695*(v-20)))
+					return s
+				}
+				b[location] = s()
+
 				if tmp > pre {
 					a3[location] = pre
 					continue

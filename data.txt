@@ -23,6 +23,7 @@ variables:
 	float plantMtemp(time, lat, lon) ;
 	float plantMpre(time, lat, lon) ;
 	float plantM(time, lat, lon) ;
+	float plantS(time, lat, lon) ;
 // global attributes:
 		:title = "subset of CRU TS4.05 plantcipitation" ;
 		:Conventions = "CF-1.0" ;
@@ -56,4 +57,5 @@ data:
  plantMtemp =plantMtempdata;
  plantMpre =plantMpredata;
  plantM =plantMdata;
+ plantS =plantSdata;
 }
