@@ -21,9 +21,21 @@ variables:
 		lat:standard_name = "latitude" ;
 		lat:axis = "Y" ;
 	float plantMtemp(time, lat, lon) ;
+		plantMtemp:long_name = "plantMtempcipitation" ;
+		plantMtemp:units = "mm/month" ;
+		plantMtemp:_FillValue = 3.e+33f ;
 	float plantMpre(time, lat, lon) ;
+		plantMpre:long_name = "plantMprecipitation" ;
+		plantMpre:units = "mm/month" ;
+		plantMpre:_FillValue = 3.e+33f ;
 	float plantM(time, lat, lon) ;
+		plantM:long_name = "plantMcipitation" ;
+		plantM:units = "mm/month" ;
+		plantM:_FillValue = 3.e+33f ;
 	float plantS(time, lat, lon) ;
+		plantS:long_name = "plantScipitation" ;
+		plantS:units = "mm/month" ;
+		plantS:_FillValue = 3.e+33f ;
 // global attributes:
 		:title = "subset of CRU TS4.05 plantcipitation" ;
 		:Conventions = "CF-1.0" ;
