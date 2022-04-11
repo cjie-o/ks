@@ -37,10 +37,12 @@ func main() {
 		}
 		log.Println(fname)
 		d1 := reflect.ValueOf(data).Elem().Field(i).Interface().([]interface{})
-
+		if len(d1) == 0 {
+			continue
+		}
 		txt := ""
 		rest := make([]string, len(d1))
-		for i := 0; i < len(d1)/len(data.Time); i++ {
+		for i := 0; i < len(data.Time); i++ {
 
 			low := i * len(data.Lat) * len(data.Lon)
 			high := low + len(data.Lat)*len(data.Lon)
