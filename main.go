@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	"strconv"
 	"strings"
 )
 
@@ -58,6 +59,7 @@ func main() {
 	plant1 = strings.ReplaceAll(plant1, "timedata", string(time[1:len(time)-1]))
 	plant1 = strings.ReplaceAll(plant1, "latdata", string(lat[1:len(lat)-1]))
 	plant1 = strings.ReplaceAll(plant1, "londata", string(lon[1:len(lon)-1]))
+	plant1 = strings.ReplaceAll(plant1, "$lentime", strconv.Itoa(len(data.Time)/12/10))
 	plant1 = strings.ReplaceAll(plant1, "null", "_")
 	ioutil.WriteFile("./t.txt", []byte(plant1), 0755)
 	// log.Println(plant1)
@@ -108,8 +110,8 @@ func (D *Data) com() {
 						log.Println("lon : ", i, "lat:", j, "time:", l)
 						break
 					}
-					T += D.Tmp[location].(float64) / 10
-					P += D.Pre[location].(float64) / 10 * 12
+					T += D.Tmp[location].(float64) / 10 / 12
+					P += D.Pre[location].(float64) / 10
 				}
 
 				if is_continu {

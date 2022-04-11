@@ -1,6 +1,6 @@
 netcdf cru_ts4.05.1901.2020.plant.dat_118-126E_38-44N {
 dimensions:
-	time = 1;
+	time = $lentime;
 	lon = 16 ;
 	lat = 12 ;
 variables:
