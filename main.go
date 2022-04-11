@@ -84,10 +84,10 @@ func (D *Data) marsh() {
 }
 
 func (D *Data) com() {
-	a1 := make([]interface{}, len(D.Lon)*len(D.Lat))
-	a2 := make([]interface{}, len(D.Lon)*len(D.Lat))
-	a3 := make([]interface{}, len(D.Lon)*len(D.Lat))
-	b := make([]interface{}, len(D.Lon)*len(D.Lat))
+	a1 := make([]interface{}, len(D.Lon)*len(D.Lat)*len(D.Time)/10/12)
+	a2 := make([]interface{}, len(D.Lon)*len(D.Lat)*len(D.Time)/10/12)
+	a3 := make([]interface{}, len(D.Lon)*len(D.Lat)*len(D.Time)/10/12)
+	b := make([]interface{}, len(D.Lon)*len(D.Lat)*len(D.Time)/10/12)
 
 	D.PlantMtemp = a1
 	D.PlantMpre = a2
@@ -96,47 +96,47 @@ func (D *Data) com() {
 
 	for i := 0; i < len(D.Lon); i++ {
 		for j := 0; j < len(D.Lat); j++ {
-			// for k := 0; k < len(D.Time)/12; k++ {
-			is_continu := false
-			var T, P float64
-			T = 0
-			P = 0
-			for l := 0; l < len(D.Time); l++ {
-				location := l*len(D.Lat)*len(D.Lon) + j*len(D.Lon) + i
-				if D.Tmp[location] == nil || D.Pre[location] == nil {
-					is_continu = true
-					log.Println("lon : ", i, "lat:", j, "time:", l)
-					break
+			for k := 0; k < len(D.Time)/12/10; k++ {
+				is_continu := false
+				var T, P float64
+				T = 0
+				P = 0
+				for l := 0; l < 10*12; l++ {
+					location := l*len(D.Lat)*len(D.Lon) + k*len(D.Lat)*len(D.Lon)*10*12 + j*len(D.Lon) + i
+					if D.Tmp[location] == nil || D.Pre[location] == nil {
+						is_continu = true
+						log.Println("lon : ", i, "lat:", j, "time:", l)
+						break
+					}
+					T += D.Tmp[location].(float64) / 10
+					P += D.Pre[location].(float64) / 10 * 12
 				}
-				T += D.Tmp[location].(float64) / float64(len(D.Time))
-				P += D.Pre[location].(float64) / float64(len(D.Time)) * 12
-			}
 
-			if is_continu {
-				continue
-			}
+				if is_continu {
+					continue
+				}
 
-			tmp := 3000 / (1 + math.Exp(1.315-0.119*T))
-			pre := 3000 * (1 - math.Exp(-0.000664*P))
-			location := +j*len(D.Lon) + i
-			a1[location] = tmp
-			a2[location] = pre
+				tmp := 3000 / (1 + math.Exp(1.315-0.119*T))
+				pre := 3000 * (1 - math.Exp(-0.000664*P))
+				location := k*len(D.Lat)*len(D.Lon) + j*len(D.Lon) + i
+				a1[location] = tmp
+				a2[location] = pre
 
-			// s
-			s := func() float64 {
-				l := 300 + 25*T + 0.05*math.Pow(T, 3)
-				v := 1.05 * P / math.Sqrt(1+math.Pow(1.05*P/l, 2))
-				s := 3000 * (1 - math.Exp(-0.0009695*(v-20)))
-				return s
-			}
-			b[location] = s()
+				// s
+				s := func() float64 {
+					l := 300 + 25*T + 0.05*math.Pow(T, 3)
+					v := 1.05 * P / math.Sqrt(1+math.Pow(1.05*P/l, 2))
+					s := 3000 * (1 - math.Exp(-0.0009695*(v-20)))
+					return s
+				}
+				b[location] = s()
 
-			if tmp > pre {
-				a3[location] = pre
-				continue
+				if tmp > pre {
+					a3[location] = pre
+					continue
+				}
+				a3[location] = tmp
 			}
-			a3[location] = tmp
-			// }
 		}
 	}
 }
