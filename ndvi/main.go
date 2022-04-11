@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -12,13 +14,13 @@ type Data struct {
 	Time []int
 	Lon  []float64
 	Lat  []float64
+	PlantMtemp, PlantMpre, PlantM, PlantS,
 	Ndvi []interface{}
-	data []string
 }
 
 func main() {
 	var data *Data
-	tmp, err1 := ioutil.ReadFile("./ndvi.json")
+	tmp, err1 := ioutil.ReadFile("./t.json")
 	if err1 != nil {
 		panic(" 读取文件异常")
 	}
@@ -26,21 +28,33 @@ func main() {
 	data = &Data{}
 	json.Unmarshal(tmp, data)
 
-	txt := ""
-	data.data = make([]string, len(data.Ndvi))
-	for i := 0; i < len(data.Ndvi)/len(data.Time); i++ {
-
-		low := i * len(data.Lat) * len(data.Lon)
-		high := low + len(data.Lat)*len(data.Lon)
-
-		for j := low; j < high; j++ {
-			if data.Ndvi[j] == nil {
-				continue
-			}
-			data.data[j] = strconv.FormatFloat(data.Ndvi[j].(float64), 'f', -1, 32)
+	dt := reflect.TypeOf(data).Elem()
+	log.Println(dt.Kind())
+	for i := 0; i < dt.NumField(); i++ {
+		fname := dt.Field(i).Name
+		if fname == "Time" || fname == "Lon" || fname == "Lat" {
+			continue
 		}
+		log.Println(fname)
+		d1 := reflect.ValueOf(data).Elem().Field(i).Interface().([]interface{})
 
-		txt += fmt.Sprintln(strings.Join(data.data[low:high], ","))
+		txt := ""
+		rest := make([]string, len(d1))
+		for i := 0; i < len(d1)/len(data.Time); i++ {
+
+			low := i * len(data.Lat) * len(data.Lon)
+			high := low + len(data.Lat)*len(data.Lon)
+
+			for j := low; j < high; j++ {
+				if d1[j] == nil {
+					continue
+				}
+				rest[j] = strconv.FormatFloat(d1[j].(float64), 'f', -1, 32)
+			}
+			txt += fmt.Sprintln(i, ",", strings.Join(rest[low:high], ","))
+		}
+		if txt != "" {
+			ioutil.WriteFile("./"+fname+".txt", []byte(txt), 0755)
+		}
 	}
-	ioutil.WriteFile("./t.txt", []byte(txt), 0755)
 }
