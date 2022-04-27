@@ -1,9 +1,10 @@
-data = read.csv("./PlantM.txt")
 
-res = lm( data$X1~data$X0 )
+		x=c(1905, 1915, 1925, 1935, 1945, 1955, 1965, 1975, 1985, 1995, 2005, 2015)
+		y=c(942.44946,915.1076,936.4985,945.27216,945.9785,938.47986,939.1195,955.6392,991.8991,984.7763,976.7988,1013.1434)
+		res = lm( y~x )
+		a <- data.frame(x = 2025)
+		result <-  predict(res,a)
+		print(result)
+		print(res)
 
-print(data$X1)
-print(data$X0)
-print(res)
-
-print( predict(res, data.frame(X0=12)) )
+	
