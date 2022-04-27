@@ -1,0 +1,42 @@
+
+R version 4.2.0 (2022-04-22 ucrt) -- "Vigorous Calisthenics"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R是自由软件，不带任何担保。
+在某些条件下你可以将其自由散布。
+用'license()'或'licence()'来看散布的详细条件。
+
+R是个合作计划，有许多人为之做出了贡献.
+用'contributors()'来看合作者的详细情况
+用'citation()'会告诉你如何在出版物中正确地引用R或R程序包。
+
+用'demo()'来看一些示范程序，用'help()'来阅读在线帮助文件，或
+用'help.start()'通过HTML浏览器来看帮助文件。
+用'q()'退出R.
+
+> data = read.csv("./PlantM.txt")
+> 
+> res = lm( data$X1~data$X0 )
+> 
+> print(data$X1)
+ [1]  962.4002  993.0022  992.2558  967.0222  982.7681 1043.6199 1071.9781
+ [8] 1082.0398  997.9669  995.1200 1010.2388 1052.6145
+> print(data$X0)
+ [1]  0  1  2  3  4  5  6  7  8  9 10 11
+> print(res)
+
+Call:
+lm(formula = data$X1 ~ data$X0)
+
+Coefficients:
+(Intercept)      data$X0  
+    980.885        5.764  
+
+> 
+> print( predict(res, data.frame(X0=12)) )
+        1         2         3         4         5         6         7         8 
+ 980.8849  986.6487  992.4124  998.1762 1003.9399 1009.7037 1015.4674 1021.2312 
+        9        10        11        12 
+1026.9949 1032.7587 1038.5224 1044.2862 
+> 
